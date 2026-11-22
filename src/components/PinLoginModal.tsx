@@ -266,13 +266,6 @@ export const PinLoginModal: React.FC<PinLoginModalProps> = ({ onSuccess }) => {
               ยกเลิก
             </button>
           </div>
-
-          {/* Quick Guide Footer - Compact */}
-          <div className="mt-2 pt-1.5 border-t border-slate-100 text-[9px] text-slate-400 space-y-0.5">
-            <div>💼 <strong>ผู้บริหาร:</strong> ผอ. <code>1111111</code> • รผอ. <code>07170184 / 07170185 / 07170006</code></div>
-            <div>🔑 <strong>สลข.ผอ.:</strong> กนกกร <code>07170176</code> • กันยาวีย์ <code>07170088</code></div>
-            <div>👑 <strong>Admin:</strong> <code>21212496</code></div>
-          </div>
         </div>
 
       </div>
