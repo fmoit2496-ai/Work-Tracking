@@ -49,6 +49,10 @@ export function App() {
 
   useEffect(() => {
     refreshState();
+    // Auto-sync with Cloudflare D1
+    TaskStore.syncWithD1(() => {
+      refreshState();
+    });
   }, []);
 
   const handleRoleChange = (role: UserRole) => {

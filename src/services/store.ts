@@ -32,6 +32,18 @@ function saveToStorage<T>(key: string, data: T): void {
   }
 }
 
+async function syncTaskToCloud(tasks: Task | Task[]): Promise<void> {
+  try {
+    await fetch('/api/tasks', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(tasks),
+    });
+  } catch (err) {
+    // Offline or fallback to LocalStorage
+  }
+}
+
 export function computeTimelineStatus(deadlineStr: string, status: TaskStatus, refDate?: Date): 'ปกติ' | 'ใกล้ครบกำหนด' | 'เกินกำหนด' {
   if (status === 'เสร็จสิ้น') return 'ปกติ';
 
@@ -234,6 +246,39 @@ export class TaskStore {
 
   static saveTasks(tasks: Task[]): void {
     saveToStorage(STORAGE_KEYS.TASKS, tasks);
+    syncTaskToCloud(tasks);
+  }
+
+  static async syncWithD1(onUpdated?: () => void): Promise<{ success: boolean; message: string }> {
+    try {
+      // 1. Initialise / verify D1 tables
+      const initRes = await fetch('/api/init-db');
+      if (!initRes.ok) throw new Error('Cannot reach /api/init-db');
+
+      // 2. Fetch tasks from Cloudflare D1
+      const taskRes = await fetch('/api/tasks');
+      if (taskRes.ok) {
+        const data = await taskRes.json() as any;
+        if (data.success && Array.isArray(data.tasks) && data.tasks.length > 0) {
+          saveToStorage(STORAGE_KEYS.TASKS, data.tasks);
+        }
+      }
+
+      // 3. Fetch users from Cloudflare D1
+      const userRes = await fetch('/api/users');
+      if (userRes.ok) {
+        const uData = await userRes.json() as any;
+        if (uData.success && Array.isArray(uData.users) && uData.users.length > 0) {
+          saveToStorage(STORAGE_KEYS.USERS, uData.users);
+        }
+      }
+
+      if (onUpdated) onUpdated();
+      return { success: true, message: 'เชื่อมต่อและซิงค์ข้อมูลกับ Cloudflare D1 สำเร็จ' };
+    } catch (err) {
+      console.warn('Cloudflare D1 sync offline/skipped:', err);
+      return { success: false, message: 'โหมดออฟไลน์ (LocalStorage)' };
+    }
   }
 
   // Create Directives for single or multiple departments (All / Selected Departments)

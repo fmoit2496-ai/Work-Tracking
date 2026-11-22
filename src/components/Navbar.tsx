@@ -88,9 +88,15 @@ export const Navbar: React.FC<NavbarProps> = ({
             <h1 className="text-lg font-bold text-slate-900 tracking-tight leading-none">
               ระบบติดตามงานภายในหน่วยงาน
             </h1>
-            <p className="text-xs text-slate-500 font-medium mt-0.5">
-              Internal Work Tracking System
-            </p>
+            <div className="flex items-center gap-2 mt-0.5">
+              <p className="text-xs text-slate-500 font-medium">
+                Internal Work Tracking System
+              </p>
+              <span className="hidden sm:inline-flex items-center gap-1 text-[10px] font-bold text-sky-700 bg-sky-50 px-1.5 py-0.2 rounded-md border border-sky-200" title="ฐานข้อมูล Cloudflare D1 เชื่อมต่อแล้ว">
+                <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse" />
+                <span>Cloudflare D1</span>
+              </span>
+            </div>
           </div>
         </div>
 
